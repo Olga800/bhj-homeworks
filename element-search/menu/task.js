@@ -1,10 +1,10 @@
 (() => {
     const menu = document.body.querySelectorAll(".menu__link");
     for (let i = 0; i < menu.length; i++) {
-        menu[i].addEventListener("click", myFunction);
+        menu[i].onclick = myFunction;
     }
     function myFunction() {
-        this.nextElementSibling.onclick = function() {
+        this.preventDefault.onclick = function() {
             return false;
         }
         if (this.nextElementSibling.className === 'menu menu_sub menu_active') {
