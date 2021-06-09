@@ -1,4 +1,4 @@
-var slideNumber = 0;
+        var slideNumber = 0;
 	var sliderItems = document.getElementsByClassName("slider__item");
 	var sliderDots = document.getElementsByClassName("slider__dot");
 	
