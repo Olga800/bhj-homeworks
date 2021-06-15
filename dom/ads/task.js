@@ -9,11 +9,11 @@ function isActiveRotator(element, index, array) {
 
 function setNewRotatorIndex(currentRotator) {
     return (currentRotator === listOfRotatorCasesLength - 1) ? 0 : ++currentRotator;
-}
+};
 
 function rotatorClassChange(rotator) {
     rotator.classList.toggle('rotator__case_active');
-}
+};
 
 function newSetInterval(speed) {
     let rotatorNewSetInterval = setInterval(function () {
@@ -29,8 +29,8 @@ function newSetInterval(speed) {
         // cancel current setInterval and start new one for next rotator (with speed for next rotator)
         clearInterval(rotatorNewSetInterval);
         newSetInterval(listOfRotatorCases[setNewRotatorIndex(newRotator)].dataset.speed);
-    }, speed)
-}
+    }, speed);
+};
 
 // first start with initial speed and color for current rotator
 listOfRotatorCases[listOfRotatorCases.findIndex(isActiveRotator)].style.color = listOfRotatorCases[listOfRotatorCases.findIndex(isActiveRotator)].dataset.color;
