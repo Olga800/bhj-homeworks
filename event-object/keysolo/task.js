@@ -21,8 +21,6 @@ class Game {
     document.addEventListener('keypress', event => {
       if (this.currentSymbol.textContent.toLowerCase() === event.key.toLowerCase());
         this.success();
-      else
-        this.fail();
     });
   };
 
