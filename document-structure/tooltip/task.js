@@ -15,7 +15,7 @@ function tooltipsMaker() {
             event.preventDefault();
             if ( tooltipList[i].classList.contains(`tooltip_active`) ) {
                 tooltipList[i].classList.remove(`tooltip_active`);
-            }; else {
+            } else {
                 tooltipListRemover();
                 const leftIndent = hasTooltip[i].getBoundingClientRect().left;
                 const topIndent = hasTooltip[i].getBoundingClientRect().top;
