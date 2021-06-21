@@ -1,35 +1,24 @@
-`use strict`;
+'use strict';
 
-const hasTooltip = document.querySelectorAll(`.has-tooltip`);
-const hasTooltipLength = hasTooltip.length;
+const toolTipList = Array.from(document.querySelectorAll('a.has-tooltip'));
+let innerTooltipText;
 
-let tooltipList;
-
-function tooltipsMaker() {
-    for (let i = 0; i < hasTooltipLength; i++) {
-        hasTooltip[i].insertAdjacentHTML(`afterEnd`, `<div class="tooltip">${hasTooltip[i].title}</div>`);
+toolTipList.forEach(function (tip) {
+    tip.onclick = function (event) {
+        let tooltip = document.querySelector('div.tooltip_active');
+        let topCoordinate = tip.getBoundingClientRect().top < window.innerHeight / 2 ?  tip.getBoundingClientRect().bottom + 10 : tip.getBoundingClientRect().top - 30;
+        let leftCoordinate = tip.getBoundingClientRect().left < window.innerWidth / 2 ? tip.getBoundingClientRect().left + 10 : tip.getBoundingClientRect().left - 10;
+        let html = `<div class="tooltip tooltip_active" style="left: ${leftCoordinate}px; top: ${topCoordinate}px">${tip.title}</div>`;
+        if (tooltip && event.path[0].innerText == innerTooltipText) {
+            tooltip.classList.toggle('tooltip_active');
+        } else if (tooltip) {
+            tooltip.style.left = `${leftCoordinate}px`;
+            tooltip.style.top = `${topCoordinate}px`;
+            tooltip.textContent = `${tip.title}`;
+        } else {
+            tip.insertAdjacentHTML('afterend', html);
+        };
+        innerTooltipText = event.path[0].innerText;
+        return false;
     };
-    tooltipList = document.querySelectorAll(`.tooltip`);
-    for (let i = 0; i < hasTooltipLength; i++) {
-        hasTooltip[i].addEventListener(`click`, function() {
-            event.preventDefault();
-            if ( tooltipList[i].classList.contains(`tooltip_active`) ) {
-                tooltipList[i].classList.remove(`tooltip_active`);
-            } else {
-                tooltipListRemover();
-                const leftIndent = hasTooltip[i].getBoundingClientRect().left;
-                const topIndent = hasTooltip[i].getBoundingClientRect().top;
-                const bottomIndent = hasTooltip[i].getBoundingClientRect().bottom;
-                tooltipList[i].style = `left: ${leftIndent}px; top: ${topIndent + (bottomIndent - topIndent)}px`;
-                tooltipList[i].classList.add(`tooltip_active`);
-            };
-            document.addEventListener(`scroll`, tooltipListRemover);
-        });
-    };
-};
-function tooltipListRemover() {
-    for (let i = 0; i < tooltipList.length; i++) {
-        tooltipList[i].classList.remove(`tooltip_active`);
-    };
-};
-document.addEventListener(`DOMContentLoaded`, tooltipsMaker);
+});
