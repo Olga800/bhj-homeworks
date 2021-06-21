@@ -1,42 +1,37 @@
-`use strict`;
+const tasksInput = document.getElementById("task__input");
+const tasksAdd = document.getElementById("tasks__add");
+const tasksList = document.getElementById("tasks__list");
 
-const tasksInput = document.getElementById(`task__input`);
-const tasksAddButton = document.getElementById(`tasks__add`);
-const tasksList = document.getElementById(`tasks__list`);
-let taskRemoveButton;
-let tasks;
+const taskWrite = function() {
+    let taskText = tasksInput.value;
+    return `<div class="task">
+                <div class="task__title">
+                    ${taskText}
+                </div>
+                <a href="#" class="task__remove">&times;</a>
+            </div>`
+}
 
-function taskAdd() {
-    if (tasksInput.value) {
+tasksInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && tasksInput.value !== "") {
         event.preventDefault();
-
-        tasksList.insertAdjacentHTML(`beforeEnd`, `
-            <div class="task">
-            <div class="task__title">
-                ${tasksInput.value}
-            </div>
-            <a href="#" class="task__remove">&times;</a>
-            </div>`);
-        
+        tasksList.innerHTML += taskWrite();
         tasksInput.value = "";
-
-        taskRemoveButton = document.getElementsByClassName(`task__remove`);
-        tasks = document.getElementsByClassName(`task`);        
-    };
-};
-
-tasksAddButton.addEventListener(`click`, taskAdd);
-
-tasksInput.addEventListener(`keydown`, event => {    
-    if (event.keyCode === 13) {
-        taskAdd();            
-    };
+    }    
 });
 
-tasksList.onclick = function(event) {
-    let target = event.target;
+tasksAdd.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (tasksInput.value !== "") {
+        tasksList.innerHTML += taskWrite();
+        tasksInput.value = "";
+    }    
+});
 
-    if ( target.classList.contains(`task__remove`) ) {
-        target.closest(`.task`).remove();
-    };
-};
+tasksList.addEventListener("click", (event) => {
+    let target = event.target;
+    if (target.classList.contains("task__remove")) {
+        event.preventDefault();
+        event.target.closest(".task").remove();
+    }
+});
