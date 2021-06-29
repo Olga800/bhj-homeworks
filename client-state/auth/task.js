@@ -1,71 +1,62 @@
-'use strict';
+let signin = document.getElementById("signin");
+signin.classList.add("signin_active");
 
-const signin = document.getElementById('signin');
-const signinForm = document.getElementById('signin__form');
+let signinForm = signin.querySelector("#signin__form");
 
-const welcome = document.getElementById('welcome');
-const userId = document.getElementById('user_id');
-const signoutButton = document.getElementById('signout__btn');
+function clearForm() {
+	signinForm.querySelector(`[name="login"]`).value = "";
+	signinForm.querySelector(`[name="password"]`).value = "";
+}
 
-signinForm.addEventListener('submit', e => {
-  e.preventDefault();
-  
-  const formData = new FormData(signinForm);
-  const request = new XMLHttpRequest();
-  request.open('POST', 'https://netology-slow-rest.herokuapp.com/auth.php'); 
-  
-  request.addEventListener('readystatechange', function() {
-    if (this.readyState !== this.DONE)  
-      return;
-          
-      switch (this.status) {
-        case 0:
-          alert('Нет ответа от сервера');
-          break;
-                
-        case 200:
-          const answer = JSON.parse(this.responseText);
-          if (answer.success === undefined) {
-            alert('Ошибка ответа сервера');
-            return;
-          }
-          if (!answer.success) {
-            alert('Неверный логин/пароль');
-            return;
-          }
-          if (answer.user_id === undefined) {
-            alert('Ошибка ответа сервера');
-            return;
-          }
-          
-          localStorage.userId = answer.user_id;
-          userId.innerText = localStorage.userId;
-          signin.classList.remove('signin_active');
-          welcome.classList.add('welcome_active');          
-          
-          break;
-              
-        default:
-          alert(`Ошибка, код ответа ${this.status} (${this.statusText})`); 
-      }
+function signIN(e) {
+	e.preventDefault();
+	let xhr = new XMLHttpRequest();
+	xhr.addEventListener("loadend", function () {
+		let response = this.response;
+		if (response.success) {
+			localStorage.setItem("user_id", response.user_id);
+		} else {
+			alert("Неверный логин/пароль");
+		}
+		showWelcome();
+	});
+	xhr.responseType = "json";
+	xhr.open("POST", this.closest("form").action);
+	xhr.send(new FormData(this.closest("form")));
+};
 
-  });
-  
-  request.send(formData);
-  
-  for (const input of signinForm.querySelectorAll('input'))
-    input.value = '';
-  
-});
+function signOUT(e) {
+	e.preventDefault();
+	localStorage.removeItem("user_id");
+	showWelcome();
+};
 
-signoutButton.addEventListener('click', () => {
-  delete localStorage.userId;
-  welcome.classList.remove('welcome_active'); 
-  signin.classList.add('signin_active');  
-});
+function showWelcome() {
+	let userID = localStorage.getItem("user_id");
+	let welcomeWindow = document.getElementById("welcome");
+	if (userID) {
+		welcomeWindow.querySelector("#user_id").textContent = userID;
+		welcomeWindow.classList.add("welcome_active");
+		signinForm.querySelector(`[name="login"]`).style.display = "none";
+		signinForm.querySelector(`[name="password"]`).style.display = "none";
+		signinForm.querySelector("#signin__btn").style.display = "none";
+		signinForm.querySelector("#signout__btn").style.display = "block";
+	} else {
+		signinForm.querySelector(`[name="login"]`).style.display = "block";
+		signinForm.querySelector(`[name="password"]`).style.display = "block";
+		signinForm.querySelector("#signout__btn").style.display = "none";
+		signinForm.querySelector("#signin__btn").style.display = "block";
+		welcomeWindow.querySelector("#user_id").textContent = "";
+		welcomeWindow.classList.remove("welcome_active");
+	}
+	clearForm();
+};
 
-if (localStorage.userId !== undefined) {
-  userId.innerText = localStorage.userId;
-  welcome.classList.add('welcome_active');  
-} else
-  signin.classList.add('signin_active');    
+signinForm
+	.querySelector("#signin__btn")
+	.addEventListener("click", signIN, false);
+signinForm
+	.querySelector("#signout__btn")
+	.addEventListener("click", signOUT, false);
+
+showWelcome();
