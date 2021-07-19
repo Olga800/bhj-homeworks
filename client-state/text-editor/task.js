@@ -1,16 +1,12 @@
-let dataText = document.getElementById("editor");
+'use strict';
 
-let previousText = localStorage.getItem("dataText");
+const editor = document.getElementById('editor');
+const button = document.getElementById('clear');
 
-dataText.value = previousText;
+const key = 'editorText';
 
-dataText.addEventListener("keyup", dataText_OnKeyUp);
+button.addEventListener('click', () => editor.value = '');
 
-function dataText_OnKeyUp(e) {
-	localStorage.setItem("dataText", this.value);
-}
+window.addEventListener('unload', () => localStorage[key] = editor.value);
 
-clearBtn.addEventListener("click", function () {
-	dataText.value = "";
-	localStorage.removeItem("dataText");
-});
+editor.value = localStorage[key];
